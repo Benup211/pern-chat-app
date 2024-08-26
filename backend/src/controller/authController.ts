@@ -3,6 +3,7 @@ import prisma from "../db/prisma";
 import { Service } from "../utils/service";
 import bcryptjs from "bcryptjs";
 import { Avatar } from "../utils/avatar";
+import { AuthRepository } from "../repository/authRepository";
 export class AuthController {
     static async welcome(req: Request, res: Response) {
         res.status(200).json({ message: "Welcome to the API" });
@@ -10,24 +11,16 @@ export class AuthController {
 
     static async registerUser(req: Request, res: Response, next: NextFunction) {
         try {
-            let { username, fullName, password, confirmPasword, gender } =
+            let { username, fullName, password, gender } =
                 req.body;
-            const user = await prisma.user.findUnique({ where: { username } });
+            const user = await AuthRepository.findUserByUsername(username);
             if (user) {
                 next(Service.CreateErrorResponse("User already exists", 400));
             }
             const salt = await bcryptjs.genSalt(10);
             const hashedPassword = await bcryptjs.hash(password, salt);
             const profilePic = Avatar(username, gender);
-            const newUser = await prisma.user.create({
-                data: {
-                    username: username,
-                    fullName: fullName,
-                    password: hashedPassword,
-                    gender: gender,
-                    profilePicture: profilePic,
-                },
-            });
+            const newUser = await AuthRepository.createUser(username,fullName,hashedPassword,gender,profilePic);
             if (newUser) {
                 const token = Service.GenerateJWTToken(res, newUser.id);
                 res.status(201).json({
@@ -51,7 +44,7 @@ export class AuthController {
     static async loginUser(req: Request, res: Response, next: NextFunction) {
         const { username, password } = req.body;
         try {
-            const user = await prisma.user.findUnique({ where: { username } });
+            const user = await AuthRepository.findUserByUsername(username);
             if (!user) {
                 next(Service.CreateErrorResponse("Invalid Credentials", 404));
             }
@@ -91,10 +84,7 @@ export class AuthController {
     }
     static async getUser(req:Request,res:Response,next:NextFunction){
         try{
-            console.log(req.body.userID);
-            const user=await prisma.user.findUnique({where:{id:req.body.userID},select:{
-                id:true,username:true,gender:true,profilePicture:true
-            }})
+            const user=await AuthRepository.findUserByID(req.body.userID);
             if(!user){
                 next(Service.CreateErrorResponse("User not found",400));
             }
