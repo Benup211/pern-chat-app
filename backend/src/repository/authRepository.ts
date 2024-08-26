@@ -7,7 +7,7 @@ export class AuthRepository{
     }
     static async findUserByID(id:string){
         return await prisma.user.findUnique({where:{id:id},select:{
-            id:true,username:true,gender:true,profilePicture:true
+            id:true,fullName:true,gender:true,profilePicture:true
         }})
     }
     static async createUser(username:string,fullName:string,password:string,gender:'male' | 'female',profilePicture:string){

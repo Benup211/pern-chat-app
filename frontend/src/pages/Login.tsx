@@ -1,34 +1,89 @@
-import {FC,ReactElement} from 'react'
-
+import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Loader } from "lucide-react";
+import { AuthState } from "../state/authState";
+import { Navigate } from "react-router-dom";
 const Login = () => {
-  return (
-    <div className='flex flex-col items-center justify-center min-w-96 mx-auto p-4 sm:p-0'>
-        <div className="w-full p-6 rounded-lg shadow-md bg-gray-800 backdrop-filter backdrop-blur-lg">
-            <h1 className="text-3xl font-semibold text-center text-gray-200">
-                Login
-                <span className='text-blue-500'> ChatApp</span>
-            </h1>
-            <form>
-                <div>
-                    <label className='label'>
-                        <span className="text-base label-text">Username</span>
-                    </label>
-                    <input type="text" className="w-full input input-bordered h-10" placeholder='Enter username' />
-                </div>
-                <div>
-                    <label className='label'>
-                        <span className="text-base label-text">Password</span>
-                    </label>
-                    <input type="password" className="w-full input input-bordered h-10" placeholder='Enter password' />
-                </div>
-                <a href="#" className='text-sm hover:underline hover:text-blue-600 mt-2 inline-block'> Don't have an account?</a>
-                <div>
-                    <button className='btn btn-block btn-sm mt-2' type='submit'>Login</button>
-                </div>
-            </form>
+    const { isLoading, loginUser, error } = AuthState();
+    const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        try {
+            loginUser(username, password);
+            return <Navigate to="/" replace />;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    return (
+        <div className="flex flex-col items-center justify-center min-w-96 mx-auto p-4 sm:p-0">
+            <div className="w-full p-6 rounded-lg shadow-md bg-gray-800 backdrop-filter backdrop-blur-lg">
+                <h1 className="text-3xl font-semibold text-center text-gray-200">
+                    Login
+                    <span className="text-blue-500"> ChatApp</span>
+                </h1>
+                <form onSubmit={handleLoginSubmit}>
+                    <div>
+                        <label className="label">
+                            <span className="text-base label-text">
+                                Username
+                            </span>
+                        </label>
+                        <input
+                            type="text"
+                            className="w-full input input-bordered h-10"
+                            placeholder="Enter username"
+                            value={username}
+                            onChange={(e) => {
+                                setUsername(e.target.value);
+                            }}
+                            disabled={isLoading}
+                        />
+                    </div>
+                    <div>
+                        <label className="label">
+                            <span className="text-base label-text">
+                                Password
+                            </span>
+                        </label>
+                        <input
+                            type="password"
+                            className="w-full input input-bordered h-10"
+                            placeholder="Enter password"
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                            }}
+                            disabled={isLoading}
+                        />
+                    </div>
+                    {error && (
+                        <p className="text-red-500 font-normal my-2">{error}</p>
+                    )}
+                    <Link
+                        to="/signup"
+                        className="text-sm hover:underline hover:text-blue-600 mt-2 inline-block"
+                    >
+                        {" "}
+                        Don't have an account?
+                    </Link>
+                    <div>
+                        <button
+                            className="btn btn-block btn-sm mt-2"
+                            type="submit"
+                        >
+                            {isLoading ? (
+                                <Loader className="w-6 h-6 animate-spin  mx-auto" />
+                            ) : (
+                                "Login"
+                            )}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-  )
-}
+    );
+};
 
-export default Login
+export default Login;

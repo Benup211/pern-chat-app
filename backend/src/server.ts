@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import MessageRoutes from "./routes/messageRoute";
 import AuthRoutes from "./routes/authRoute";
+import cors from 'cors';
 import { Request, Response,NextFunction } from "express";
 export class Server {
     public app: express.Application = express();
@@ -16,6 +17,7 @@ export class Server {
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
+        this.app.use(cors({origin: "http://localhost:5173", credentials: true}));
         this.app.use(bodyParser.json());
     }
 
