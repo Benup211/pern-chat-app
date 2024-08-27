@@ -62,6 +62,7 @@ export const AuthState = create<IAuthState>((set) => ({
                 password,
             });
             set({
+                user: response.data.user,
                 isLoading: false,
                 error: null,
                 message: response.data.message,
@@ -95,7 +96,12 @@ export const AuthState = create<IAuthState>((set) => ({
         set({ error: null, message: null });
         try {
             const response = await axios.get(`${API_URL}/auth/logout`);
-            set({ isAuthenticated: false, message: response.data.message });
+            set({ isAuthenticated: false, message: response.data.message,error:null,user:{
+                id: "",
+                fullName: "",
+                gender: "",
+                profilePicture: "",
+            } });
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 const { response } = error as AxiosError<IErrorResponse>;
