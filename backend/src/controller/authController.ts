@@ -61,7 +61,7 @@ export class AuthController {
                         id: user.id,
                         fullName: user.fullName,
                         username: user.username,
-                        profilePic: user.profilePicture,
+                        profilePicture: user.profilePicture,
                     },
                     message:"User Login Sucessfully"
                 });
