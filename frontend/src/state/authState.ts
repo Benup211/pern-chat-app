@@ -26,30 +26,30 @@ export const AuthState = create<IAuthState>((set) => ({
                 isAuthenticated: true,
                 error: null,
                 isCheckingAuth: false,
-                message:response.data.message
+                message: response.data.message,
             });
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 const { response } = error as AxiosError<IErrorResponse>;
                 if (response) {
                     set({
-                        error: response.data.errorMessage,
+                        error: null,
                         isCheckingAuth: false,
-                        isAuthenticated:false
+                        isAuthenticated: false,
                     });
                     throw response.data;
                 } else {
                     set({
                         error: "Error Checking Auth",
                         isCheckingAuth: false,
-                        isAuthenticated:false
+                        isAuthenticated: false,
                     });
                 }
             } else {
                 set({
                     error: "Error Checking Auth",
                     isCheckingAuth: false,
-                    isAuthenticated:false
+                    isAuthenticated: false,
                 });
             }
         }
@@ -65,7 +65,9 @@ export const AuthState = create<IAuthState>((set) => ({
                 isLoading: false,
                 error: null,
                 message: response.data.message,
+                isAuthenticated: true,
             });
+            return response;
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 const { response } = error as AxiosError<IErrorResponse>;
@@ -84,6 +86,71 @@ export const AuthState = create<IAuthState>((set) => ({
             } else {
                 set({
                     error: "Error while Login In",
+                    isLoading: false,
+                });
+            }
+        }
+    },
+    logoutUser: async () => {
+        set({ error: null, message: null });
+        try {
+            const response = await axios.get(`${API_URL}/auth/logout`);
+            set({ isAuthenticated: false, message: response.data.message });
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const { response } = error as AxiosError<IErrorResponse>;
+                if (response) {
+                    set({ error: response.data.errorMessage });
+                } else {
+                    set({ error: "error loging out" });
+                }
+                throw error;
+            } else {
+                set({ error: "error loging out" });
+                throw error;
+            }
+        }
+    },
+    signUpUser: async (
+        username: string,
+        fullName: string,
+        password: string,
+        confirmPassword: string,
+        gender: string
+    ) => {
+        set({ isLoading: true, error: null });
+        try {
+            const response = await axios.post(`${API_URL}/auth/register`, {
+                username,
+                fullName,
+                password,
+                confirmPassword,
+                gender,
+            });
+            set({
+                isLoading: false,
+                error: null,
+                message: response.data.message,
+            });
+            return response;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const { response } = error as AxiosError<IErrorResponse>;
+                if (response) {
+                    set({
+                        error: response.data.errorMessage,
+                        isLoading: false,
+                    });
+                    throw response.data;
+                } else {
+                    set({
+                        error: "Error while Signing Up",
+                        isLoading: false,
+                    });
+                }
+            } else {
+                set({
+                    error: "Error while Signing Up",
                     isLoading: false,
                 });
             }

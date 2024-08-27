@@ -2,14 +2,15 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Loader } from "lucide-react";
 import { AuthState } from "../state/authState";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
     const { isLoading, loginUser, error } = AuthState();
+    const navigate=useNavigate();
     const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            loginUser(username, password);
-            return <Navigate to="/" replace />;
+            await loginUser(username, password);
+            navigate('/');
         } catch (error) {
             console.log(error);
         }

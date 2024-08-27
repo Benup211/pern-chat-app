@@ -14,4 +14,6 @@ export interface IAuthState{
     message:string|null,
     checkAuth:Function;
     loginUser:Function;
+    logoutUser:Function;
+    signUpUser:Function;
 }
