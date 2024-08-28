@@ -5,7 +5,8 @@ import MessageRoutes from "./routes/messageRoute";
 import AuthRoutes from "./routes/authRoute";
 import cors from 'cors';
 import { Request, Response,NextFunction } from "express";
-export class Server {
+
+export class MainServer {
     public app: express.Application = express();
     constructor() {
         this.setConfiguration();

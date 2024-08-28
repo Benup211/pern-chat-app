@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import prisma from "../db/prisma";
 import { MessageRepository } from "../repository/messageRepository";
+import {getReceiverSocketID,io} from '../index'
 export class MessageController {
     static async welcome(req: Request, res: Response) {
         res.status(200).json({ message: "Welcome to the API" });
@@ -20,6 +20,10 @@ export class MessageController {
             if (newMessage) {
                 conversation = await MessageRepository.UpdateConversation(conversation.id,newMessage.id);
             }
+            const receiverSocketID=getReceiverSocketID(receiverID);
+            if(receiverSocketID){
+                io.to(receiverSocketID).emit('newMessage',newMessage);
+            }
             res.status(200).json({ newMessage });
         } catch (error) {
             next(error);
@@ -34,7 +38,9 @@ export class MessageController {
             if (!conversation) {
                 res.status(200).json([]);
             }
-            res.status(200).json(conversation?.messages);
+            else{
+                res.status(200).json(conversation.messages);
+            }
         } catch (error) {
             next(error);
         }
