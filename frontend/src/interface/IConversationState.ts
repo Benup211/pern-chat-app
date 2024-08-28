@@ -10,4 +10,6 @@ export interface IConversationState{
     getMessages:Function;
     isFetchingConversation:boolean;
     isFetchingMessages:boolean;
+    isSendingMessage:boolean;
+    sendMessage:Function;
 }

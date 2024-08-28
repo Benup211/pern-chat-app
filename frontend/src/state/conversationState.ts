@@ -7,12 +7,13 @@ export const ConversationState = create<IConversationState>((set)=>({
     setSelectedConversation:(conversation)=>{
         set({selectedConversation:conversation})
     },
-    setMessages:(messages)=>{
-        set({messages:messages})
+    setMessages:(newmessage)=>{
+        set({messages: newmessage})
     },
     conversations:[],
     isFetchingConversation:false,
     isFetchingMessages:false,
+    isSendingMessage:false,
     getConversation:async()=>{
         set({isFetchingConversation:true})
         try {
@@ -29,6 +30,7 @@ export const ConversationState = create<IConversationState>((set)=>({
             const data = await response.json();
             set({conversations: data, isFetchingConversation: false});
         } catch (error) {
+            set({isFetchingConversation: false});
             console.error(error);
         }
     },
@@ -48,7 +50,30 @@ export const ConversationState = create<IConversationState>((set)=>({
             const data = await response.json();
             set({messages: data, isFetchingMessages: false});
         } catch (error) {
+            set({isFetchingMessages: false});
             console.error(error);
+        }
+    },
+    sendMessage:async(message:string,receiverID:string)=>{
+        set({isSendingMessage:true})
+        try {
+            const response = await fetch(`${API_URL}/send/${receiverID}`, {
+            method: 'POST', 
+            credentials: 'include', 
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({message})
+            });
+            if (!response.ok) {
+            throw new Error('Failed to send message');
+            }
+            const data = await response.json();
+            set({isSendingMessage: false});
+            return data.newMessage;
+        } catch (error) {
+            console.error(error);
+            return;
         }
     }
 }));
