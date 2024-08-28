@@ -3,8 +3,10 @@ import { useState } from "react";
 import { Loader } from "lucide-react";
 import { AuthState } from "../state/authState";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { IErrorResponse } from "../interface/IErrorResponse";
 const Login = () => {
-    const { isLoading, loginUser, error } = AuthState();
+    const { isLoading, loginUser } = AuthState();
     const navigate=useNavigate();
     const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -12,7 +14,7 @@ const Login = () => {
             await loginUser(username, password);
             navigate('/');
         } catch (error) {
-            console.log(error);
+            toast.error((error as IErrorResponse)?.errorMessage);
         }
     };
     const [username, setUsername] = useState("");
@@ -59,9 +61,6 @@ const Login = () => {
                             disabled={isLoading}
                         />
                     </div>
-                    {error && (
-                        <p className="text-red-500 font-normal my-2">{error}</p>
-                    )}
                     <Link
                         to="/signup"
                         className="text-sm hover:underline hover:text-blue-600 mt-2 inline-block"

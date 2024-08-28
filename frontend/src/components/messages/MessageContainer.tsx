@@ -3,24 +3,31 @@ import MessageInput from "./MessageInput";
 import NoChatSelected from "./NoChatSelected";
 import { ConversationState } from "../../state/conversationState";
 import { useEffect } from "react";
+
 const MessageContainer = () => {
     const { selectedConversation, messages, getMessages, isFetchingMessages } =
         ConversationState();
+
     useEffect(() => {
         if (selectedConversation) {
             getMessages(selectedConversation.id);
         }
     }, [selectedConversation]);
+
+    useEffect(() => {
+    }, [messages]);
+
     if (isFetchingMessages)
         return (
             <>
-                <div className="md:min-w-[450px] flex flex-col">
+                <div className="w-full flex flex-col">
                     <span className="loading loading-spinner mx-auto my-auto" />
                 </div>
             </>
         );
+
     return (
-        <div className="md:min-w-[450px] flex flex-col">
+        <div className="w-full flex flex-col">
             {!selectedConversation ? (
                 <NoChatSelected />
             ) : (
