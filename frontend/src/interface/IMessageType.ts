@@ -5,4 +5,5 @@ export interface IMessageType {
     conversationID:string;
     createdAt:string;
     updatedAt:string;
+    shouldShake?:boolean;
 }

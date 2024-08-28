@@ -11,6 +11,7 @@ const Message: FC<IMessageType> = (props): ReactElement => {
     const img=isSentByMe?user.profilePicture:selectedConversation?.profilePicture;
     const bgBlue=isSentByMe?"bg-blue-500":"";
     const chatPosition=isSentByMe?"chat-end":"chat-start";
+    const messageShake=props.shouldShake?"shake":"";
     return (
         <div className={`chat ${chatPosition}`}>
             <div className="chat-image avatar">
@@ -21,7 +22,7 @@ const Message: FC<IMessageType> = (props): ReactElement => {
                     />
                 </div>
             </div>
-            <div className={`chat-bubble text-white ${bgBlue}`}>{body}</div>
+            <div className={`chat-bubble text-white ${messageShake} ${bgBlue}`}>{body}</div>
             <div className="chat-footer opacity-50 text-xs flex gap-1 items-center">
                 {dateObject.toLocaleTimeString("en-US", {
                     hour: "2-digit",

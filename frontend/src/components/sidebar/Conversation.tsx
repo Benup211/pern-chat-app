@@ -2,17 +2,20 @@ import {FC,ReactElement,useMemo} from 'react';
 import { IConversationType } from '../../interface/IConversationType';
 import { RandomEmojis } from './RandomEmojis';
 import { ConversationState } from '../../state/conversationState';
+import { SocketState } from '../../state/SocketState';
 const Conversation :FC<IConversationType>= (props):ReactElement => {
     const {fullName,profilePicture}=props;
     const randomEmoji=useMemo(()=>RandomEmojis(),[])
     const {setSelectedConversation,selectedConversation}=ConversationState();
     const isSelected:boolean=selectedConversation?.id===props.id;
+    const {onlineUsers}=SocketState();
+    const isOnline=onlineUsers.includes(props.id);
   return (
     <>
     <div className={`flex gap-2 items-center hover:bg-sky-500 rounded p-2 py-1 cursor-pointer ${isSelected?'bg-sky-500':''}`}
     onClick={()=>setSelectedConversation(props)}
     >
-        <div className='avatar online'>
+        <div className={`avatar ${isOnline?'online':''}`}>
             <div className="w-12 rounded-full">
                 <img src={profilePicture} alt={`${fullName} avatar`} />
             </div>
